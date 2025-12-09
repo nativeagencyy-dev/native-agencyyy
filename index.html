@@ -1,312 +1,179 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NΛTIVE Agency</title>
-  <link rel="icon" type="image/png" href="NAA.png" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NΛTIVE Agency</title>
+<link rel="icon" type="image/png" href="NAA.png" />
 
-  <!-- REACT + REACT DOM (CDN) -->
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<!-- REACT + REACT DOM (CDN) -->
+<script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-  <!-- BABEL (permet d'utiliser JSX directement dans un fichier HTML) -->
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body, html { font-family: Arial, sans-serif; overflow-x: hidden; scroll-behavior: smooth; background-color: #fff; }
 
-  <!-- RESET CSS POUR UN MEILLEUR RENDU -->
-  <style>
-    body, html {
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-      overflow-x: hidden;
-    }
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-  </style>
+  a { text-decoration: none; color: inherit; }
+  
+  /* NAVBAR */
+  nav { 
+    display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; 
+    position: sticky; top: 0; background-color: rgba(255,255,255,0.95); z-index: 10; border-bottom: 1px solid #eee; 
+    transition: background-color 0.3s;
+  }
+  nav.sticky { background-color: white; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+
+  nav .menu { display: flex; gap: 25px; flex-wrap: wrap; font-size: 1.1rem; }
+  nav .menu a { position: relative; transition: color 0.3s; }
+  nav .menu a::after { content: ""; position: absolute; width: 0%; height: 2px; left: 0; bottom: -4px; background-color: black; transition: width 0.3s; }
+  nav .menu a:hover::after { width: 100%; }
+
+  /* HERO */
+  .hero { text-align: center; padding: 120px 20px; color: black; position: relative; overflow: hidden; }
+  .hero h1 { font-size: 3rem; line-height: 1.1; margin-bottom: 16px; transform: translateY(30px); opacity: 0; transition: all 0.8s ease-out; }
+  .hero p { font-size: 1.2rem; color: #555; max-width: 600px; margin: 0 auto 32px auto; transform: translateY(30px); opacity: 0; transition: all 0.8s ease-out 0.2s; }
+
+  .btn-primary {
+    display: inline-block;
+    padding: 16px 40px;
+    border-radius: 50px;
+    background-color: black;
+    color: white;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .btn-primary:hover { transform: translateY(-4px) scale(1.05); box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
+
+  /* SERVICES */
+  .services-section { padding: 80px 20px; background-color: transparent; }
+  .grid { display: grid; gap: 40px; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+  .service-card { padding: 40px; border-radius: 20px; border: 1px solid #e5e7eb; background-color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.05); transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.8s ease, transform 0.8s ease; opacity: 0; transform: translateY(50px); }
+  .service-card:hover { transform: translateY(-10px); box-shadow: 0 14px 28px rgba(0,0,0,0.12); }
+
+  /* CREATORS MESSAGE */
+  .creators-section { padding: 80px 20px; background-color: #f9f9f9; text-align: center; transition: all 0.8s ease; opacity: 0; transform: translateY(30px); }
+  .creators-section.show { opacity: 1; transform: translateY(0); }
+  .creators-section h2 { font-size: 2.5rem; font-weight: bold; margin-bottom: 20px; }
+  .creators-msg { font-size: 1.3rem; color: #555; max-width: 700px; margin: 0 auto; line-height: 1.6; }
+
+  /* CONTACT */
+  .contact-section { padding: 80px 20px; opacity: 0; transform: translateY(30px); transition: all 0.8s ease; }
+  .contact-section.show { opacity: 1; transform: translateY(0); }
+  .contact-section h2 { font-size: 2.8rem; font-weight: bold; text-align: center; margin-bottom: 40px; }
+  .contact-section form { max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+  .contact-section input, .contact-section textarea { padding: 16px; border-radius: 12px; border: 1px solid #ccc; font-size: 1rem; }
+  .contact-section button { padding: 16px; border-radius: 50px; background-color: black; color: white; font-size: 1.1rem; cursor: pointer; transition: transform 0.2s; }
+  .contact-section button:hover { transform: scale(1.05); }
+
+  /* FOOTER */
+  footer { text-align: center; padding: 40px; color: #777; border-top: 1px solid #eee; }
+
+  /* BACKGROUND PARALLAX */
+  .page-background { min-height: 100vh; background-image: url('background.jpg'); background-size: cover; background-position: center; background-attachment: fixed; }
+
+  @media (min-width: 768px) { .hero h1 { font-size: 4rem; } .hero p { font-size: 1.3rem; } }
+</style>
 </head>
 
 <body>
-  <div id="root"></div>
+<div id="root"></div>
 
-  <script type="text/babel">
+<script type="text/babel">
+function NativeAgency() {
+  const services = [
+    { title: "Brand Partnerships", text: "We secure premium collaborations, negotiate high-value deals and build long-term brand relationships tailored to your niche." },
+    { title: "Creative Direction", text: "From strategy to execution, we help creators craft impactful content and a powerful image aligned with modern digital culture." },
+    { title: "Growth Management", text: "We develop personalized growth plans, audience expansion systems and platform-first scaling processes." },
+  ];
 
-    function NativeAgency() {
-      const services = [
-        {
-          title: "Brand Partnerships",
-          text: "We secure premium collaborations, negotiate high-value deals and build long-term brand relationships tailored to your niche."
-        },
-        {
-          title: "Creative Direction",
-          text: "From strategy to execution, we help creators craft impactful content and a powerful image aligned with modern digital culture."
-        },
-        {
-          title: "Growth Management",
-          text: "We develop personalized growth plans, audience expansion systems and platform-first scaling processes."
-        }]
-        const creatorImages = [
-  "",  // image du 1er créateur
-  "",  // image du 2ème créateur
-  "",  // image du 3ème créateur
-      ];
+  React.useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY + window.innerHeight * 0.7;
+      document.querySelectorAll('.service-card').forEach(card => {
+        if (card.offsetTop < scrollY) card.style.opacity = 1;
+      });
+      const creators = document.querySelector('.creators-section');
+      if(creators.offsetTop < scrollY) creators.classList.add('show');
+      const contact = document.querySelector('.contact-section');
+      if(contact.offsetTop < scrollY) contact.classList.add('show');
+      const nav = document.querySelector('nav');
+      if(window.scrollY > 50) nav.classList.add('sticky'); else nav.classList.remove('sticky');
+    };
+    window.addEventListener('scroll', handleScroll);
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
-      const creators = [
-        { 
-  name: "", 
-  desc: (
-    <>
-       
-      <a 
-        href=""
-        target="_blank"
-        style={{
-          color: "#555",          // même couleur que ton texte
-          textDecoration: "none", // pas de souligné
-          marginLeft: "6px",
-          fontWeight: "500",
-        }}
-        onMouseOver={(e) => e.target.style.textDecoration = "underline"}
-        onMouseOut={(e) => e.target.style.textDecoration = "none"}
-      >
-        
-      </a>
-    </>
-  )
-},
-        { name: "", 
-  desc: (
-    <>
-       
-      <a 
-        href=""
-        target="_blank"
-        style={{
-          color: "#555",          // même couleur que ton texte
-          textDecoration: "none", // pas de souligné
-          marginLeft: "6px",
-          fontWeight: "500",
-        }}
-        onMouseOver={(e) => e.target.style.textDecoration = "underline"}
-        onMouseOut={(e) => e.target.style.textDecoration = "none"}
-      >
-        
-      </a>
-    </>
-  ) },
-        { name: "", 
-  desc: (
-    <>
-      
-      <a 
-        href=""
-        target="_blank"
-        style={{
-          color: "#555",          // même couleur que ton texte
-          textDecoration: "none", // pas de souligné
-          marginLeft: "6px",
-          fontWeight: "500",
-        }}
-        onMouseOver={(e) => e.target.style.textDecoration = "underline"}
-        onMouseOut={(e) => e.target.style.textDecoration = "none"}
-      >
-        
-      </a>
-    </>
-  ) },
-      ];
-
-      return (
-        <div style={{ minHeight: "100vh",
-  backgroundImage: "url('background.jpg')", // ← ton image ici
-  backgroundSize: "cover",   // pour que l'image couvre tout l'écran
-  backgroundPosition: "center", // centre l'image
-  backgroundAttachment: "fixed", // reste fixe quand on scroll
-  color: "black" }}>
-
-          <nav style={{
-  width: "100%",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
-  padding: "24px",
-  borderBottom: "1px solid #e5e7eb",
-  boxSizing: "border-box",
-}}>
-
-  {/* Logo */}
-  <div style={{ fontSize: "2rem", fontWeight: "bold", letterSpacing: "6px" }}>
-    NΛTIVE
-  </div>
-
-  {/* Menu */}
-  <div style={{
-    display: "flex",
-    gap: "30px",
-    fontSize: "1.2rem",
-    flexWrap: "wrap", // pour mobile
-  }}>
-    <a href="#home">Home</a>
-    <a href="#creators">Creators</a>
-    <a href="#services">Services</a>
-    <a href="#contact">Contact</a>
-  </div>
-</nav>
-
-
-
-
-
-          {/* HERO SECTION */}
-          <section id="home" style={{
-            width: "100%",
-            textAlign: "center",
-            padding: "120px 20px",
-          }}>
-            <h1 style={{ fontSize: "4rem", fontWeight: "bold", maxWidth: "900px", margin: "0 auto", lineHeight: "1.1" }}>
-              Elevating the Next Era of Digital Creators
-            </h1>
-            <p style={{
-              marginTop: "24px",
-              fontSize: "1.3rem",
-              maxWidth: "600px",
-              marginLeft: "auto",
-              marginRight: "auto",
-              color: "#555",
-            }}>
-              NΛTIVE is a next-gen creator management agency. We scale influence, brand power and partnerships with a refined 2025 identity.
-            </p>
-            <a href="#contact" style={{
-  display: "inline-block",
-  marginTop: "40px",
-  padding: "16px 40px",
-  borderRadius: "50px",
-  backgroundColor: "black",
-  color: "white",
-  fontSize: "1.1rem",
-  textDecoration: "none",
-  textAlign: "center",
-  cursor: "pointer",
-}}>Join NΛTIVE</a>
-
-          </section>
-
-          {/* SERVICES */}
-          <section id="services" style={{
-  padding: "100px 40px",
-  display: "grid",
-  gap: "40px",
-  gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-  backgroundColor: "transparent", // ← important
-}}>
-  {services.map((s, i) => (
-    <div key={i} style={{
-      padding: "40px",
-      borderRadius: "20px",
-      border: "1px solid #e5e7eb",
-      boxShadow: "0 4px 10px rgba(0,0,0,0.05)",
-      backgroundColor: "white", // ← les rectangles restent blancs
-    }}>
-      <h2 style={{ fontSize: "2rem", fontWeight: "600", marginBottom: "10px" }}>{s.title}</h2>
-      <p style={{ fontSize: "1.1rem", color: "#666" }}>{s.text}</p>
-    </div>
-  ))}
-          </section>
-
-          {/* CREATORS SECTION */}
-          <section id="creators" style={{ padding: "100px 40px", backgroundColor: "#f9f9f9" }}>
-            <h2 style={{ fontSize: "3rem", fontWeight: "bold", textAlign: "center", marginBottom: "20px" }}>Our Creators</h2>
-            <p style={{
-              textAlign: "center",
-              fontSize: "1.45rem",
-              color: "#555",
-              maxWidth: "700px",
-              margin: "0px auto 30px auto",
-              lineHeight: "1.6"
-              }}>
-              As 2025 comes to an end, NΛTIVE is pausing in December to prepare for an elevated new chapter in 2026.<br />
-              Our 2026 selection is currently underway.
-              The first wave of creators will be officially revealed soon
-              </p>
-
-            <div style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
-              gap: "40px",
-            }}>
-              {creators.map((c, i) => (
-                <div key={i} style={{
-                  backgroundColor: "white",
-                  borderRadius: "20px",
-                  overflow: "hidden",
-                  boxShadow: "0 3px 14px rgba(0,0,0,0.1)",
-                }}>
-                  <div style={{ height: "250px", backgroundColor: "#e5e5e5" }}>
-  <img 
-    src={creatorImages[i]}
-    alt={c.name}
-    style={{ width: "100%", height: "100%", objectFit: "cover" }}
-  />
-</div>
-
-
-
-                  <div style={{ padding: "30px" }}>
-                    <h3 style={{ fontSize: "1.5rem", fontWeight: "600" }}>{c.name}</h3>
-                    <p style={{ 
-  marginTop: "8px", 
-  color: "#555",
-  fontSize: "1.15rem"   // ← augmente TOUTE la description
-}}>
-  {c.desc}
-</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          {/* CONTACT */}
-          <section id="contact" style={{ padding: "100px 40px" }}>
-            <h2 style={{ fontSize: "3rem", fontWeight: "bold", textAlign: "center", marginBottom: "40px" }}>Contact Us</h2>
-
-            <form style={{
-              maxWidth: "600px",
-              margin: "0 auto",
-              display: "flex",
-              flexDirection: "column",
-              gap: "20px",
-            }}
-            onSubmit={(e) => { e.preventDefault(); alert("Message sent!"); }}>
-              <input style={{ padding: "16px", borderRadius: "12px", border: "1px solid #ccc" }} placeholder="Your Name" />
-              <input style={{ padding: "16px", borderRadius: "12px", border: "1px solid #ccc" }} placeholder="Your Email" />
-              <textarea style={{ padding: "16px", borderRadius: "12px", border: "1px solid #ccc", height: "160px" }} placeholder="Your Message" />
-              <button style={{
-                padding: "16px",
-                borderRadius: "50px",
-                backgroundColor: "black",
-                color: "white",
-                fontSize: "1.1rem",
-                cursor: "pointer",
-              }}>Send</button>
-            </form>
-          </section>
-
-          <footer style={{ textAlign: "center", padding: "40px", color: "#777", borderTop: "1px solid #eee" }}>
-            © 2025 NΛTIVE Agency — All rights reserved.
-          </footer>
-
+  return (
+    <div className="page-background">
+      {/* NAV */}
+      <nav>
+        <div style={{ fontSize: "2rem", fontWeight: "bold", letterSpacing: "6px" }}>NΛTIVE</div>
+        <div className="menu">
+          <a href="#home">Home</a>
+          <a href="#creators">Creators</a>
+          <a href="#services">Services</a>
+          <a href="#contact">Contact</a>
         </div>
-      );
-    }
+      </nav>
 
-    ReactDOM.createRoot(document.getElementById("root")).render(<NativeAgency />);
+      {/* HERO */}
+      <section id="home" className="hero">
+        <h1 style={{ transform: "translateY(0)", opacity: 1 }}>Elevating the Next Era of Digital Creators</h1>
+        <p style={{ transform: "translateY(0)", opacity: 1 }}>NΛTIVE is a next-gen creator management agency. We scale influence, brand power and partnerships with a refined 2025 identity.</p>
+        <a href="#contact" className="btn-primary">Join NΛTIVE</a>
+      </section>
 
-  </script>
+      {/* SERVICES */}
+      <section id="services" className="services-section">
+        <div className="grid">
+          {services.map((s, i) => (
+            <div key={i} className="service-card">
+              <h2 style={{ fontSize: "1.8rem", fontWeight: "600", marginBottom: "10px" }}>{s.title}</h2>
+              <p style={{ fontSize: "1.1rem", color: "#666" }}>{s.text}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* CREATORS MESSAGE */}
+      <section id="creators" className="creators-section">
+        <h2>Our Creators</h2>
+        <p className="creators-msg">
+          As 2025 comes to an end, NΛTIVE is pausing in December to prepare for an elevated new chapter in 2026.<br />
+          Our 2026 selection is currently underway.<br />
+          The first wave of creators will be officially revealed soon.
+        </p>
+      </section>
+
+      {/* CONTACT */}
+      <section id="contact" className="contact-section">
+        <h2>Contact Us</h2>
+        <form onSubmit={(e) => { e.preventDefault(); alert("Message sent!"); }}>
+          <input placeholder="Your Name" />
+          <input placeholder="Your Email" />
+          <textarea placeholder="Your Message" />
+          <button>Send</button>
+        </form>
+      </section>
+
+      {/* FOOTER */}
+      <footer>
+        © 2025 NΛTIVE Agency — All rights reserved.
+      </footer>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<NativeAgency />);
+</script>
 </body>
-</html>;
+</html>
+
+
 
 
 
