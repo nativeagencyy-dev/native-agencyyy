@@ -16,7 +16,7 @@
   body, html { font-family: Arial, sans-serif; overflow-x: hidden; scroll-behavior: smooth; background-color: #fff; }
 
   a { text-decoration: none; color: inherit; }
-  
+
   /* NAVBAR */
   nav { 
     display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; 
@@ -25,10 +25,16 @@
   }
   nav.sticky { background-color: white; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
 
-  nav .menu { display: flex; gap: 25px; flex-wrap: wrap; font-size: 1.1rem; }
-  nav .menu a { position: relative; transition: color 0.3s; }
-  nav .menu a::after { content: ""; position: absolute; width: 0%; height: 2px; left: 0; bottom: -4px; background-color: black; transition: width 0.3s; }
-  nav .menu a:hover::after { width: 100%; }
+  .menu { display: flex; gap: 25px; font-size: 1.1rem; flex-wrap: wrap; }
+  .menu a { position: relative; transition: color 0.3s; }
+  .menu a::after { content: ""; position: absolute; width: 0%; height: 2px; left: 0; bottom: -4px; background-color: black; transition: width 0.3s; }
+  .menu a:hover::after { width: 100%; }
+
+  /* HAMBURGER */
+  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+  .hamburger div { width: 25px; height: 3px; background-color: black; transition: all 0.3s; }
+  .menu-mobile { display: none; flex-direction: column; gap: 20px; position: absolute; top: 70px; right: 24px; background-color: white; padding: 20px; border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
+  .menu-mobile.show { display: flex; }
 
   /* HERO */
   .hero { text-align: center; padding: 120px 20px; color: black; position: relative; overflow: hidden; }
@@ -74,7 +80,10 @@
   /* BACKGROUND PARALLAX */
   .page-background { min-height: 100vh; background-image: url('background.jpg'); background-size: cover; background-position: center; background-attachment: fixed; }
 
-  @media (min-width: 768px) { .hero h1 { font-size: 4rem; } .hero p { font-size: 1.3rem; } }
+  @media (max-width: 768px) {
+    .menu { display: none; }
+    .hamburger { display: flex; }
+  }
 </style>
 </head>
 
@@ -88,6 +97,8 @@ function NativeAgency() {
     { title: "Creative Direction", text: "From strategy to execution, we help creators craft impactful content and a powerful image aligned with modern digital culture." },
     { title: "Growth Management", text: "We develop personalized growth plans, audience expansion systems and platform-first scaling processes." },
   ];
+
+  const [menuOpen, setMenuOpen] = React.useState(false);
 
   React.useEffect(() => {
     const handleScroll = () => {
@@ -117,6 +128,17 @@ function NativeAgency() {
           <a href="#creators">Creators</a>
           <a href="#services">Services</a>
           <a href="#contact">Contact</a>
+        </div>
+        <div className="hamburger" onClick={() => setMenuOpen(!menuOpen)}>
+          <div style={{ transform: menuOpen ? 'rotate(45deg) translate(5px,5px)' : 'rotate(0)' }}></div>
+          <div style={{ opacity: menuOpen ? 0 : 1 }}></div>
+          <div style={{ transform: menuOpen ? 'rotate(-45deg) translate(5px,-5px)' : 'rotate(0)' }}></div>
+        </div>
+        <div className={`menu-mobile ${menuOpen ? 'show' : ''}`}>
+          <a href="#home" onClick={() => setMenuOpen(false)}>Home</a>
+          <a href="#creators" onClick={() => setMenuOpen(false)}>Creators</a>
+          <a href="#services" onClick={() => setMenuOpen(false)}>Services</a>
+          <a href="#contact" onClick={() => setMenuOpen(false)}>Contact</a>
         </div>
       </nav>
 
@@ -172,6 +194,8 @@ ReactDOM.createRoot(document.getElementById("root")).render(<NativeAgency />);
 </script>
 </body>
 </html>
+
+
 
 
 
